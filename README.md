@@ -1,32 +1,51 @@
 # wand-cdn
 
-Public CDN-hosted JavaScript libraries for Wand Websites clients. Served via [jsDelivr](https://www.jsdelivr.com/?docs=gh).
+Production-built JavaScript libraries for Wand Websites clients. Per-client first-party CDN hosting (e.g. `cdn.allcare-ga.com`) backed by Cloudflare Pages, with jsDelivr as a public-cache fallback.
 
-All files here are final, minified, production artifacts. Source lives in the Wand OS repo (private); this repo hosts the compiled output so Webflow sites can load it over HTTPS with CDN caching.
+All files here are final, minified, production artifacts. Source lives in the Wand OS repo (private); this repo hosts the compiled output. Pushes to `main` auto-deploy to Cloudflare Pages via the workflow in `.github/workflows/deploy-pages.yml`.
 
 ## Usage
 
-Load any file via jsDelivr with a pinned tag for immutable caching:
+### Primary (per-client first-party CDN)
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/connorvforrest/wand-cdn@v1.0.0/<filename>.js"></script>
+<script src="https://cdn.allcare-ga.com/acg-personalization-v1.js" defer></script>
 ```
 
-During rapid iteration use `@main` (12hr cache) or `@<sha>` (exact commit). For production pages, always use a `@vX.Y.Z` tag.
+`cdn.allcare-ga.com` is a CNAME → `acg-cdn.pages.dev` (Cloudflare Pages project `acg-cdn`). Pushes to this repo's `main` branch deploy a fresh version automatically. The Pages CDN purges its own edge cache on each deploy.
+
+### Fallback / iteration (jsDelivr)
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/connorvforrest/wand-cdn@v1.3.0/acg-personalization-v1.js"></script>
+```
+
+Use a pinned `@vX.Y.Z` tag for production. `@main` for active development (12hr cache).
 
 ## Files
 
-| File | Version | Used by | Source |
-|------|---------|---------|--------|
-| `acg-personalization-v1.js` | v1.0.0 | AllCare Georgia — site-wide nearest-clinic personalization | `wand-os/clients/acg/wip/site-personalization/` |
+| File | Latest | Used by | Source |
+|------|--------|---------|--------|
+| `acg-personalization-v1.js` | v1.3.0 | AllCare Georgia — site-wide nearest-clinic personalization | `wand-os/clients/acg/wip/site-personalization/` |
 
 ## Release process
 
-From the Wand OS repo, run the release script for the library you want to publish:
+From the Wand OS repo:
 
 ```bash
 cd clients/acg/wip/site-personalization
-./release.sh v1.1.0
+./release.sh v1.4.0
 ```
 
-That rebuilds, copies the output here, commits, tags, and pushes.
+Rebuilds the lib, copies into wand-cdn, commits, tags, pushes to `main`. The `Deploy to Cloudflare Pages` workflow then auto-deploys to `cdn.allcare-ga.com` (~2 min).
+
+Verify after release: `curl -I https://cdn.allcare-ga.com/acg-personalization-v1.js` — etag should change.
+
+## Required GitHub secrets
+
+Set under repo Settings → Secrets and variables → Actions:
+
+- `CLOUDFLARE_API_TOKEN` — must have `Pages:Edit` + `Account:Read` scopes (and `Cache:Purge` if doing manual purges)
+- `CLOUDFLARE_ACCOUNT_ID`
+
+These mirror the corresponding secrets in Bitwarden Secrets Manager (`Allcare Georgia` project: `Cloudflare_API_KEY_wand_acg_cdn`, `CLOUDFLARE_ACCOUNT_ID`). **If you rotate the BWS-stored token, also update the GH secret** — they don't auto-sync.
