@@ -25,10 +25,13 @@ export const onRequest = async (context) => {
   // future-proofing) keep CF defaults.
   if (url.pathname === '/acg-personalization-v1.js') {
     const headers = new Headers(response.headers);
-    headers.set(
-      'Cache-Control',
-      'public, max-age=300, must-revalidate'
-    );
+    // CF zone rule on allcare-ga.com overrides cacheable Cache-Control values
+    // (forcing 186-day max-age) but passes through `no-cache`/`no-store` —
+    // confirmed by /geo's no-store sticking through to prod. Using `no-cache`
+    // here means browsers must revalidate every request; etag match returns
+    // 304 (cheap) so perf cost is minimal, but every fix reaches every visitor
+    // immediately on next page load instead of taking 186 days to propagate.
+    headers.set('Cache-Control', 'no-cache, must-revalidate');
     headers.set('CDN-Cache-Control', 'public, max-age=300');
     return new Response(response.body, {
       status: response.status,
