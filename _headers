@@ -16,5 +16,12 @@
   Pragma: no-cache
   CDN-Cache-Control: no-store
 
-# Lib bundle stays cacheable — versioned via filename change on each release,
-# so we want long edge cache. Don't need a rule here; CF defaults work.
+# Lib bundle has a fixed URL (acg-personalization-v1.js) — the `v1` suffix is a
+# major-version pin, not per-release versioning. CF Pages defaults to
+# `Cache-Control: public, max-age=16070400, must-revalidate` (186 days), which
+# locks every browser onto whatever build it first downloaded — fresh deploys
+# don't reach real visitors for months. Override to 5 min so a deploy
+# propagates fast while still giving CF reasonable edge-cache efficiency for
+# the bulk of requests.
+/acg-personalization-v1.js
+  Cache-Control: public, max-age=300, must-revalidate
