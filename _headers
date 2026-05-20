@@ -1,0 +1,20 @@
+# Cloudflare Pages — header rules for the acg-cdn project.
+#
+# The /geo function MUST NOT be edge-cached. The response is per-visitor
+# (based on IP-derived MaxMind geo), and any shared caching means every
+# visitor sees the first-cached visitor's coords. Observed in prod
+# 2026-05-20: /geo returned Westminster, CO to every caller globally,
+# which made dallas-ga (the westernmost clinic) the universal "nearest"
+# pairing for every Atlanta visitor.
+#
+# The function itself sets `Cache-Control: no-store` but Pages edge caching
+# can ignore that under some configs. This `_headers` rule is the belt to
+# the function's suspenders.
+
+/geo
+  Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  CDN-Cache-Control: no-store
+
+# Lib bundle stays cacheable — versioned via filename change on each release,
+# so we want long edge cache. Don't need a rule here; CF defaults work.

@@ -33,7 +33,14 @@ function jsonResponse(body, status, origin) {
     status: status,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'private, max-age=300',
+      // `no-store` is the only directive CF Pages reliably honors at the edge.
+      // Without it, the function response gets cached globally and every visitor
+      // sees the same coords (and the same paired clinic). `private` alone is
+      // not enough — observed in prod 2026-05-20 returning Westminster CO to
+      // every visitor regardless of IP. Adding `_headers` rule for /geo as well.
+      'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
+      'Pragma': 'no-cache',
+      'CDN-Cache-Control': 'no-store',
       ...corsHeaders(origin),
     },
   });
