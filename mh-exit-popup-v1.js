@@ -262,6 +262,28 @@
     show();
   }
 
+  // URL match (mirrors PostHog Survey condition evaluation client-side; needed because
+  // posthog.getActiveMatchingSurveys filters OUT type:api surveys — we use getSurveys
+  // instead and apply URL match ourselves).
+  function urlMatches(pattern, matchType, url) {
+    if (!pattern) return true;
+    try {
+      if (matchType === "regex") return new RegExp(pattern).test(url);
+      if (matchType === "exact") return url === pattern || url.replace(/\/$/, "") === pattern.replace(/\/$/, "");
+      if (matchType === "not_icontains") return url.toLowerCase().indexOf(pattern.toLowerCase()) === -1;
+      // default: icontains
+      return url.toLowerCase().indexOf(pattern.toLowerCase()) > -1;
+    } catch (e) { return false; }
+  }
+
+  function surveyMatches(s, currentUrl) {
+    if (s.archived) return false;
+    if (s.end_date) return false;
+    if (s.start_date && new Date(s.start_date) > new Date()) return false;
+    var c = s.conditions || {};
+    return urlMatches(c.url, c.urlMatchType, currentUrl);
+  }
+
   function checkAndShow() {
     if (state.fired || isOpen()) return;
 
@@ -274,23 +296,22 @@
       return;
     }
 
-    if (!window.posthog || !posthog.getActiveMatchingSurveys) return;
+    if (!window.posthog || !posthog.getSurveys) return;
 
-    posthog.getActiveMatchingSurveys(function (surveys) {
+    posthog.getSurveys(function (surveys) {
       if (!surveys || !surveys.length || state.fired) return;
-      // First matching survey we have a variant for AND that hasn't been shown recently for its family
+      var currentUrl = location.href;
+      // First survey that: matches the current URL, has a mapped variant, and isn't freq-capped
       for (var i = 0; i < surveys.length; i++) {
         var sv = surveys[i];
+        if (!surveyMatches(sv, currentUrl)) continue;
         var v = VARIANTS[sv.name];
-        if (!v) {
-          if (window.console && console.warn) console.warn("[mh-exit-popup] Unmapped survey:", sv.name);
-          continue;
-        }
+        if (!v) continue; // unmapped survey (e.g. "Open feedback") — silently skip
         if (recentlyShown(v.family)) continue; // freq cap (per-family)
         activate(v, sv);
         return;
       }
-    }, QA_MODE); // forceReload bypasses local survey cache when in QA mode
+    }, QA_MODE); // forceReload re-fetches survey definitions when in QA mode
   }
 
   // ── Trigger detection (exit intent + scroll-up) ───────────────────────────
