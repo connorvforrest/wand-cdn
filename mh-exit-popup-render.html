@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MH Exit Popup — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  background:
+    radial-gradient(ellipse at top left, rgba(255, 91, 254, 0.04), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(107, 255, 220, 0.04), transparent 50%),
+    #0a0a0b;
+}
+
+/* ──── Popup styles (mirrors production) ──── */
+.mh-exit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+.mh-exit-popup {
+  background: #141516;
+  border: 1px solid rgba(255, 91, 254, 0.3);
+  border-radius: 20px;
+  box-shadow:
+    0 0 60px rgba(255, 91, 254, 0.15),
+    0 0 120px rgba(253, 222, 60, 0.05);
+  width: 920px;
+  max-width: 95vw;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+.mh-exit-content {
+  flex: 1;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 12px;
+}
+.mh-exit-image-col {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background: #141516;
+  position: relative;
+}
+.mh-exit-popup--no-rightcol { max-width: 580px; }
+.mh-exit-popup--no-rightcol .mh-exit-image-col { display: none; }
+.mh-exit-popup--no-rightcol .mh-exit-content { margin: 0 auto; }
+.mh-exit-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 8px;
+  line-height: 1;
+  z-index: 20;
+}
+.mh-exit-eyebrow {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 91, 254, 0.95);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.mh-exit-headline {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  color: #f7f8f8;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.mh-exit-body {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #8a8f98;
+  line-height: 1.55;
+  margin: 0 0 8px 0;
+}
+.mh-exit-spacer { flex: 1; }
+.mh-exit-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 28px;
+  background: #6BFFDC;
+  color: #0a0a0a;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 9999px;
+  box-shadow: 0 0 28px rgba(255, 91, 254, 0.35);
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  cursor: pointer;
+}
+.mh-exit-arrow { margin-left: 8px; }
+.mh-exit-dismiss {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px;
+  text-align: center;
+}
+.mh-exit-mockup {
+  background: #1c1d20;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.5);
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+  color: #f7f8f8;
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.mh-exit-mockup-cap {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a8f98;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.mh-exit-map { display: flex; flex-direction: column; }
+.mh-exit-map-row {
+  display: grid;
+  grid-template-columns: 1fr 24px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+}
+.mh-exit-map-row + .mh-exit-map-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.mh-exit-map-symptom {
+  font-size: 14px;
+  color: #8a8f98;
+  font-style: italic;
+}
+.mh-exit-map-arrow {
+  color: #6BFFDC;
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+}
+.mh-exit-map-role {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f7f8f8;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 767px) {
+  .mh-exit-overlay { align-items: flex-end; }
+  .mh-exit-popup {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    flex-direction: column;
+  }
+  .mh-exit-image-col {
+    order: -1;
+    padding: 24px 20px 4px;
+    border-radius: 20px 20px 0 0;
+  }
+  .mh-exit-content { padding: 20px 24px 28px; gap: 10px; }
+  .mh-exit-headline { font-size: 26px; }
+  .mh-exit-body { font-size: 14px; }
+  .mh-exit-mockup { padding: 18px; max-width: 100%; }
+  .mh-exit-map-row { padding: 10px 0; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function () {
+  var variant = (location.search.match(/[?&]variant=([^&]+)/) || [])[1] || 'global';
+
+  var html = '';
+  if (variant === 'hire') {
+    html = '<div class="mh-exit-overlay active">' +
+      '<div class="mh-exit-popup mh-exit-popup--no-rightcol">' +
+        '<button class="mh-exit-close" aria-label="Close popup">×</button>' +
+        '<div class="mh-exit-content">' +
+          '<p class="mh-exit-eyebrow">Almost there</p>' +
+          '<h2 class="mh-exit-headline">60 seconds from a match.</h2>' +
+          '<p class="mh-exit-body">Finish the form. A hiring strategist calls today. Your single best match in 24 hours, working on your problem this week.</p>' +
+          '<div class="mh-exit-spacer"></div>' +
+          '<button class="mh-exit-cta" type="button">Finish the form <span class="mh-exit-arrow">→</span></button>' +
+          '<button class="mh-exit-dismiss">Maybe later</button>' +
+        '</div>' +
+        '<div class="mh-exit-image-col"></div>' +
+      '</div>' +
+    '</div>';
+  } else {
+    // default: global
+    html = '<div class="mh-exit-overlay active">' +
+      '<div class="mh-exit-popup">' +
+        '<button class="mh-exit-close" aria-label="Close popup">×</button>' +
+        '<div class="mh-exit-content">' +
+          '<p class="mh-exit-eyebrow">One thought</p>' +
+          '<h2 class="mh-exit-headline">Hire by symptom, not by job title.</h2>' +
+          '<p class="mh-exit-body">Most don’t. Book a free call with a hiring strategist — we’ll match you to a marketer trained for your bottleneck.</p>' +
+          '<div class="mh-exit-spacer"></div>' +
+          '<a href="#" class="mh-exit-cta">Get Started <span class="mh-exit-arrow">→</span></a>' +
+          '<button class="mh-exit-dismiss">I know the role</button>' +
+        '</div>' +
+        '<div class="mh-exit-image-col">' +
+          '<div class="mh-exit-mockup">' +
+            '<div class="mh-exit-mockup-cap">Symptom → Role</div>' +
+            '<div class="mh-exit-map">' +
+              '<div class="mh-exit-map-row"><span class="mh-exit-map-symptom">“CAC creeping up”</span><span class="mh-exit-map-arrow">→</span><span class="mh-exit-map-role">PAID SOCIAL</span></div>' +
+              '<div class="mh-exit-map-row"><span class="mh-exit-map-symptom">“List dying”</span><span class="mh-exit-map-arrow">→</span><span class="mh-exit-map-role">EMAIL OPS</span></div>' +
+              '<div class="mh-exit-map-row"><span class="mh-exit-map-symptom">“Brand stagnant”</span><span class="mh-exit-map-arrow">→</span><span class="mh-exit-map-role">CONTENT LEAD</span></div>' +
+              '<div class="mh-exit-map-row"><span class="mh-exit-map-symptom">“Funnel leaking”</span><span class="mh-exit-map-arrow">→</span><span class="mh-exit-map-role">CRO LEAD</span></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  document.getElementById('root').innerHTML = html;
+})();
+</script>
+</body>
+</html>
