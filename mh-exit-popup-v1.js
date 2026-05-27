@@ -21,7 +21,7 @@
       headline: "Hire by symptom, not by job title.",
       body: "Most don’t. Book a free call with a hiring strategist — we’ll match you to a marketer trained for your bottleneck.",
       cta: "Get Started",
-      ctaAction: { type: "navigate", href: "https://marketerhire.com/hire" },
+      ctaAction: { type: "navigate", href: "/hire" },
       dismiss: "I know the role",
       rightCol: {
         type: "symptom-map",
