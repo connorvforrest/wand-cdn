@@ -60,6 +60,25 @@
     return m ? decodeURIComponent(m[1]) : null;
   })();
 
+  // Per-family frequency cap (PostHog Survey wait_period is global across all surveys
+  // on the project, so it's unsuitable when other PostHog surveys exist — e.g. MH's
+  // "Open feedback" survey would suppress ours. JS-side per-family cap instead.)
+  var FREQ_CAP_DAYS = 7;
+  var freqKey = function (family) { return "mh_exit_popup_lastShown_" + family; };
+  function recentlyShown(family) {
+    if (QA_MODE) return false;
+    try {
+      var last = localStorage.getItem(freqKey(family));
+      if (!last) return false;
+      var daysSince = (Date.now() - parseInt(last, 10)) / (1000 * 60 * 60 * 24);
+      return daysSince < FREQ_CAP_DAYS;
+    } catch (e) { return false; }
+  }
+  function markShown(family) {
+    if (QA_MODE) return;
+    try { localStorage.setItem(freqKey(family), Date.now().toString()); } catch (e) {}
+  }
+
   var state = { fired: false, survey: null, variant: null, openedAt: 0 };
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -179,6 +198,7 @@
     o.classList.add("active");
     document.body.style.overflow = "hidden";
     state.openedAt = Date.now();
+    markShown(state.variant.family);
     track_shown();
   }
 
@@ -248,7 +268,6 @@
     // QA force: bypass PostHog, render the specified family directly
     if (QA_SURVEY) {
       if (QA_SURVEY === "off") return;
-      // Find a variant whose family matches the requested name
       for (var name in VARIANTS) {
         if (VARIANTS[name].family === QA_SURVEY) { activate(VARIANTS[name], null); return; }
       }
@@ -259,13 +278,18 @@
 
     posthog.getActiveMatchingSurveys(function (surveys) {
       if (!surveys || !surveys.length || state.fired) return;
-      var sv = surveys[0];
-      var v = VARIANTS[sv.name];
-      if (!v) {
-        if (window.console && console.warn) console.warn("[mh-exit-popup] Unmapped survey:", sv.name);
+      // First matching survey we have a variant for AND that hasn't been shown recently for its family
+      for (var i = 0; i < surveys.length; i++) {
+        var sv = surveys[i];
+        var v = VARIANTS[sv.name];
+        if (!v) {
+          if (window.console && console.warn) console.warn("[mh-exit-popup] Unmapped survey:", sv.name);
+          continue;
+        }
+        if (recentlyShown(v.family)) continue; // freq cap (per-family)
+        activate(v, sv);
         return;
       }
-      activate(v, sv);
     }, QA_MODE); // forceReload bypasses local survey cache when in QA mode
   }
 
