@@ -25,3 +25,7 @@
 # the bulk of requests.
 /acg-personalization-v1.js
   Cache-Control: public, max-age=300, must-revalidate
+
+# Same 5-min cap on MH exit popup — fresh deploys propagate to real visitors fast.
+/mh-exit-popup-v1.js
+  Cache-Control: public, max-age=300, must-revalidate
