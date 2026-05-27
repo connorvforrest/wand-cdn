@@ -40,7 +40,7 @@
       variant: "60s-from-match",
       eyebrow: "Almost there",
       headline: "60 seconds from a match.",
-      body: "Finish the form and a hiring strategist follows up today — usually with three pre-vetted matches inside a week.",
+      body: "Finish the form. A hiring strategist calls today. Your single best match in 24 hours.",
       cta: "Finish the form",
       ctaAction: { type: "dismiss" },
       dismiss: "Maybe later",
