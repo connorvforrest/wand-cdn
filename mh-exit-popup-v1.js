@@ -132,32 +132,32 @@
 
   function track_shown() {
     var v = state.variant;
-    var base = { mh_family: v.family, mh_variant: v.variant };
+    var base = { mh_popup: v.family, mh_popup_variant: v.variant };
     var phProps = {};
     var k;
     var m = survey_meta();
     for (k in m) phProps[k] = m[k];
     for (k in base) phProps[k] = base[k];
     ph("survey shown", phProps);
-    dataLayer.push({ event: "mh_exit_popup_shown", mh_family: v.family, mh_variant: v.variant });
+    dataLayer.push({ event: "mh_exit_popup_shown", mh_popup: v.family, mh_popup_variant: v.variant });
   }
 
   function track_dismiss(method) {
     var v = state.variant;
     var dur = state.openedAt ? String(Date.now() - state.openedAt) : null;
-    var base = { mh_family: v.family, mh_variant: v.variant, mh_dismiss_method: method, mh_popup_duration_ms: dur };
+    var base = { mh_popup: v.family, mh_popup_variant: v.variant, mh_dismiss_method: method, mh_popup_duration_ms: dur };
     var phProps = {};
     var k;
     var m = survey_meta();
     for (k in m) phProps[k] = m[k];
     for (k in base) phProps[k] = base[k];
     ph("survey dismissed", phProps);
-    dataLayer.push({ event: "mh_exit_popup_dismiss", mh_family: v.family, mh_variant: v.variant, mh_dismiss_method: method, mh_popup_duration_ms: dur });
+    dataLayer.push({ event: "mh_exit_popup_dismiss", mh_popup: v.family, mh_popup_variant: v.variant, mh_dismiss_method: method, mh_popup_duration_ms: dur });
   }
 
   function track_cta(destination) {
     var v = state.variant;
-    var base = { mh_family: v.family, mh_variant: v.variant, mh_destination: destination };
+    var base = { mh_popup: v.family, mh_popup_variant: v.variant, mh_destination: destination };
     var phProps = {};
     var k;
     var m = survey_meta();
@@ -166,7 +166,7 @@
     var qId = state.survey && state.survey.questions && state.survey.questions[0] && state.survey.questions[0].id;
     if (qId) phProps["$survey_response_" + qId] = destination;
     ph("survey sent", phProps);
-    dataLayer.push({ event: "mh_exit_popup_cta_click", mh_family: v.family, mh_variant: v.variant, mh_destination: destination });
+    dataLayer.push({ event: "mh_exit_popup_cta_click", mh_popup: v.family, mh_popup_variant: v.variant, mh_destination: destination });
   }
 
   // ── Show / hide / dismiss / CTA ───────────────────────────────────────────
@@ -315,15 +315,15 @@
     dataLayer.push({
       event: "mh_exit_popup_attribution",
       mh_exit_popup_clicker: "true",
-      mh_family: fam,
-      mh_variant: vrt
+      mh_popup: fam,
+      mh_popup_variant: vrt
     });
     if (window.posthog && posthog.capture) {
       try {
         posthog.capture("mh_exit_popup_attribution", {
           mh_exit_popup_clicker: "true",
-          mh_family: fam,
-          mh_variant: vrt
+          mh_popup: fam,
+          mh_popup_variant: vrt
         });
       } catch (e) {}
     }
