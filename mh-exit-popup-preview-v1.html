@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MH Exit Intent Popup — v3 Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f1011;
+  --muted: #6b7280;
+  --line: #e6e8eb;
+  --surface: #ffffff;
+  --bg: #f5f6f7;
+  --mint: #06a47e;
+  --pink: #d6448e;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); }
+body {
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+.page-header {
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.page-header .label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mint);
+  margin-bottom: 12px;
+}
+.page-header h1 {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  line-height: 1.15;
+}
+.page-header .meta {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 720px;
+}
+.popup-section {
+  margin-bottom: 64px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+}
+.popup-section h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+}
+.popup-section .where {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--pink);
+  font-weight: 500;
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+}
+.popup-section p.desc {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0 0 28px;
+  max-width: 720px;
+}
+.frame-row {
+  display: grid;
+  grid-template-columns: 1fr 412px;
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .frame-row { grid-template-columns: 1fr; }
+}
+.frame {
+  background: #0a0a0b;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #1c1d20;
+}
+.frame .frame-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.55);
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.frame.desktop {
+  aspect-ratio: 16 / 10;
+}
+.frame.mobile {
+  width: 412px;
+  max-width: 100%;
+  height: 720px;
+}
+.frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.copy-list {
+  margin-top: 28px;
+  padding: 20px 24px;
+  background: #f9fafb;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.copy-list h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.copy-list dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  row-gap: 6px;
+  column-gap: 18px;
+  align-items: baseline;
+}
+.copy-list dt {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.copy-list dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+.copy-list dd em {
+  font-style: italic;
+  color: var(--muted);
+}
+.page-footer {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-header">
+    <div class="label">MarketerHire · v3</div>
+    <h1>Exit Intent Popup — Final Designs</h1>
+    <p class="meta">
+      Two popups, one per page context. Fires on exit-intent (desktop cursor leaves viewport top) or scroll-up on mobile after the hero is off-screen. 5-second minimum dwell. 7-day per-popup frequency cap.
+    </p>
+  </div>
+
+  <!-- ─── Global popup ─── -->
+  <section class="popup-section">
+    <h2>Global popup</h2>
+    <div class="where">Fires on every page except /hire and thank-you variants</div>
+    <p class="desc">
+      Symptom-map framing: visitor names the bottleneck, MH names the specialist. CTA routes them into the /hire form.
+    </p>
+    <div class="frame-row">
+      <div class="frame desktop">
+        <span class="frame-label">Desktop · 1200×800</span>
+        <iframe src="mh-exit-popup-render.html?variant=global" title="Global popup desktop"></iframe>
+      </div>
+      <div class="frame mobile">
+        <span class="frame-label">Mobile · 412×720</span>
+        <iframe src="mh-exit-popup-render.html?variant=global" title="Global popup mobile"></iframe>
+      </div>
+    </div>
+    <div class="copy-list">
+      <h3>Copy</h3>
+      <dl>
+        <dt>Eyebrow</dt>     <dd>ONE THOUGHT</dd>
+        <dt>Headline</dt>    <dd>Hire by symptom, not by job title.</dd>
+        <dt>Body</dt>        <dd>Most don't. Book a free call with a hiring strategist — we'll match you to a marketer trained for your bottleneck.</dd>
+        <dt>CTA</dt>         <dd>Get Started → <em>(navigates to /hire)</em></dd>
+        <dt>Dismiss</dt>     <dd>I know the role</dd>
+        <dt>Right column</dt><dd>Symptom → Role table: CAC creeping up · List dying · Brand stagnant · Funnel leaking</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ─── /hire popup ─── -->
+  <section class="popup-section">
+    <h2>/hire popup</h2>
+    <div class="where">Fires only on /hire (and /hire/* except /hire/ty-*)</div>
+    <p class="desc">
+      Visitor is already filling the form and signals exit. Nudges them back to finishing — closes the popup, leaves them on the page (no navigation). Single-column layout, narrower card.
+    </p>
+    <div class="frame-row">
+      <div class="frame desktop">
+        <span class="frame-label">Desktop · 1200×800</span>
+        <iframe src="mh-exit-popup-render.html?variant=hire" title="/hire popup desktop"></iframe>
+      </div>
+      <div class="frame mobile">
+        <span class="frame-label">Mobile · 412×720</span>
+        <iframe src="mh-exit-popup-render.html?variant=hire" title="/hire popup mobile"></iframe>
+      </div>
+    </div>
+    <div class="copy-list">
+      <h3>Copy</h3>
+      <dl>
+        <dt>Eyebrow</dt>     <dd>ALMOST THERE</dd>
+        <dt>Headline</dt>    <dd>60 seconds from a match.</dd>
+        <dt>Body</dt>        <dd>Finish the form. A hiring strategist calls today. Your single best match in 24 hours, working on your problem this week.</dd>
+        <dt>CTA</dt>         <dd>Finish the form → <em>(closes popup, stays on /hire)</em></dd>
+        <dt>Dismiss</dt>     <dd>Maybe later</dd>
+        <dt>Right column</dt><dd><em>None — single-column layout</em></dd>
+      </dl>
+    </div>
+  </section>
+
+  <div class="page-footer">v3 · 2026-05-27 · symptom-map + 60s-from-match</div>
+
+</div>
+</body>
+</html>
