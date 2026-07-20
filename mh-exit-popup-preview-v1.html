@@ -83,14 +83,10 @@ body {
   margin: 0 0 28px;
   max-width: 720px;
 }
-.frame-row {
-  display: grid;
-  grid-template-columns: 1fr 412px;
-  gap: 32px;
-  align-items: start;
-}
-@media (max-width: 1024px) {
-  .frame-row { grid-template-columns: 1fr; }
+.frames {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 .frame {
   background: #0a0a0b;
@@ -114,12 +110,14 @@ body {
   border-radius: 4px;
 }
 .frame.desktop {
-  aspect-ratio: 16 / 10;
+  width: 100%;
+  height: 660px;
 }
 .frame.mobile {
   width: 412px;
   max-width: 100%;
   height: 720px;
+  margin: 0 auto;
 }
 .frame iframe {
   width: 100%;
@@ -196,14 +194,14 @@ body {
     <p class="desc">
       Symptom-map framing: visitor names the bottleneck, MH names the specialist. CTA routes them into the /hire form.
     </p>
-    <div class="frame-row">
+    <div class="frames">
       <div class="frame desktop">
         <span class="frame-label">Desktop · 1200×800</span>
-        <iframe src="mh-exit-popup-render.html?variant=global" title="Global popup desktop"></iframe>
+        <iframe src="mh-exit-popup-render?variant=global" title="Global popup desktop"></iframe>
       </div>
       <div class="frame mobile">
         <span class="frame-label">Mobile · 412×720</span>
-        <iframe src="mh-exit-popup-render.html?variant=global" title="Global popup mobile"></iframe>
+        <iframe src="mh-exit-popup-render?variant=global" title="Global popup mobile"></iframe>
       </div>
     </div>
     <div class="copy-list">
@@ -226,14 +224,14 @@ body {
     <p class="desc">
       Visitor is already filling the form and signals exit. Nudges them back to finishing — closes the popup, leaves them on the page (no navigation). Single-column layout, narrower card.
     </p>
-    <div class="frame-row">
+    <div class="frames">
       <div class="frame desktop">
         <span class="frame-label">Desktop · 1200×800</span>
-        <iframe src="mh-exit-popup-render.html?variant=hire" title="/hire popup desktop"></iframe>
+        <iframe src="mh-exit-popup-render?variant=hire" title="/hire popup desktop"></iframe>
       </div>
       <div class="frame mobile">
         <span class="frame-label">Mobile · 412×720</span>
-        <iframe src="mh-exit-popup-render.html?variant=hire" title="/hire popup mobile"></iframe>
+        <iframe src="mh-exit-popup-render?variant=hire" title="/hire popup mobile"></iframe>
       </div>
     </div>
     <div class="copy-list">

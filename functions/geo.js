@@ -1,7 +1,8 @@
 // Cloudflare Pages Function — visitor geo lookup.
 //
 // Endpoint: https://cdn.allcare-ga.com/geo
-// Used by:  acg-personalization-v1.js (loaded on go.allcare-ga.com + allcare-ga.com)
+// Used by:  acg-personalization-v1.js, loaded on every ACG surface (see ALLOWED_ORIGINS):
+//           apex + www + Webflow staging + legacy `go` LP + the Voxology booking subdomains.
 //
 // Returns the visitor's coarse location from Cloudflare's edge request metadata
 // (MaxMind data, ~85-90% city-accurate in US for residential IPs). Replaces the
@@ -13,13 +14,19 @@
 //   https://developers.cloudflare.com/workers/runtime-apis/request/#incomingrequestcfproperties
 
 const ALLOWED_ORIGINS = new Set([
-  'https://go.allcare-ga.com',
-  'https://allcare-ga.com',
-  'https://www.allcare-ga.com',
+  'https://allcare-ga.com',             // primary apex (production)
+  'https://www.allcare-ga.com',         // www
+  'https://allcare-3214b1.webflow.io',  // Webflow staging (new full site)
+  'https://go.allcare-ga.com',          // legacy Phase-1 LP subdomain (may retire post-launch)
+  'https://schedule.allcare-ga.com',    // Voxology booking subdomain (prod; not yet integrated)
+  'https://dev.schedule.voxology.ai',   // Voxology booking dev subdomain (forward-looking)
 ]);
 
 function corsHeaders(origin) {
-  const allowed = origin && ALLOWED_ORIGINS.has(origin) ? origin : 'https://go.allcare-ga.com';
+  // Reflect the request Origin when allowlisted; otherwise return the apex (a
+  // disallowed origin then fails CORS by design). Fallback is the apex, not `go`,
+  // since `go` may be retired after launch.
+  const allowed = origin && ALLOWED_ORIGINS.has(origin) ? origin : 'https://allcare-ga.com';
   return {
     'Access-Control-Allow-Origin': allowed,
     'Vary': 'Origin',
